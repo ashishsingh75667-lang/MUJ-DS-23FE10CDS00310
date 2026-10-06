@@ -58,7 +58,6 @@ Following the Capstone Project Guidelines:
 git clone https://github.com/ashishsingh75667-lang/MUJ-DS-23FE10CDS00310
 .git
 cd MUJ-DS-23FE10CDS00310
-
 \`\`\`
 
 ### 2. Install Dependencies
