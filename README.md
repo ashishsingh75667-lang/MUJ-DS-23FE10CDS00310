@@ -1,4 +1,3 @@
-@"
 # NLP Capstone Project: Movie Review Sentiment & Emotion Analysis
 
 ## 📌 Student & Batch Details
