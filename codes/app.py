@@ -5,7 +5,6 @@ import re
 import joblib
 import plotly.express as px
 
-# ----------------- Page Configuration -----------------
 st.set_page_config(
     page_title="Sentiment & Emotion Analyzer",
     page_icon="🎬",
@@ -13,7 +12,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ----------------- Helper Functions & Dictionaries -----------------
 EMOTION_WORDS = {
     "joy": [
         "happy", "happiness", "joy", "joyful", "love", "loved", "lovely", 
@@ -84,7 +82,6 @@ def detect_emotions(review: str):
 
     return percentages, dominant, found_keywords
 
-# ----------------- Load Artifacts -----------------
 @st.cache_resource
 def load_artifacts():
     try:
@@ -96,7 +93,6 @@ def load_artifacts():
 
 model, tfidf = load_artifacts()
 
-# ----------------- Sidebar -----------------
 st.sidebar.title("NLP Control Hub")
 st.sidebar.markdown("**Model:** LinearSVC")
 st.sidebar.markdown("**Vectorizer:** TF-IDF (10k features, 1-3 n-grams)")
@@ -107,7 +103,6 @@ if model is None or tfidf is None:
     st.error("Model artifacts (`svm_model.pkl` and `tfidf_vectorizer.pkl`) not found! Please run the export script from your notebook first.")
     st.stop()
 
-# ----------------- App Views -----------------
 if view_mode == "Single Text Prediction":
     st.title("Sentiment & Emotion Analyzer")
     st.caption("Real-time sentiment classification with confidence scoring and lexical emotion distribution.")
@@ -119,7 +114,6 @@ if view_mode == "Single Text Prediction":
         if not user_input.strip():
             st.warning("Please enter some text before analyzing.")
         else:
-            # Preprocessing & Prediction
             cleaned = clean_text(user_input)
             negation_handled = handle_negation(cleaned)
             vec = tfidf.transform([negation_handled])
@@ -145,7 +139,6 @@ if view_mode == "Single Text Prediction":
             with col3:
                 st.metric("Dominant Emotion", EMOTION_ICONS.get(dominant_emotion, dominant_emotion).upper())
 
-            # Detailed Visuals
             st.markdown("### Emotion Breakdown")
             chart_df = pd.DataFrame({
                 "Emotion": [EMOTION_ICONS[k] for k in emotion_pct.keys()],
@@ -156,7 +149,6 @@ if view_mode == "Single Text Prediction":
             fig.update_layout(yaxis={'categoryorder':'total ascending'}, showlegend=False, height=320)
             st.plotly_chart(fig, use_container_width=True)
 
-            # Explainability / Token Inspection
             with st.expander("Show Preprocessed Pipeline & Detected Keywords"):
                 st.write("**Cleaned & Negation Form:**", negation_handled)
                 st.write("**Detected Emotion Keywords:**", ", ".join(keywords_found) if keywords_found else "None")
@@ -187,7 +179,6 @@ elif view_mode == "Batch CSV Processing":
 
                 st.success("Batch processing complete!")
 
-                # Distribution chart
                 c1, c2 = st.columns([1, 2])
                 with c1:
                     counts = df_uploaded["predicted_sentiment"].value_counts().reset_index()
@@ -199,7 +190,6 @@ elif view_mode == "Batch CSV Processing":
                 with c2:
                     st.dataframe(df_uploaded[[text_column, "predicted_sentiment", "confidence_score"]].head(15), height=350)
 
-                # Export CSV
                 csv_data = df_uploaded.to_csv(index=False).encode('utf-8')
                 st.download_button(
                     label="Download Results as CSV",
